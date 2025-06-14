@@ -2,6 +2,7 @@ import React from 'react';
 import { IMG_CDN_URL } from '../utils/constant';
 
 const MovieCard = ({ posterPath }) => {
+  if (!posterPath) return null;
   return (
     <div className="w-32 md:w-40 h-48 md:h-60 transform transition-transform duration-300 hover:scale-110">
       <img

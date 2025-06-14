@@ -41,7 +41,7 @@ const GptSearchBar = () => {
     const movieNames = await getMovieNamesFromGpt(gptPrompt);
     const tmdbResults = await getTmdbResults(movieNames);
     console.log(tmdbResults);
-    dispatch(addGptMovieResults(tmdbResults));
+    dispatch(addGptMovieResults({movieResults: tmdbResults, movieNames: movieNames}));
   };
 
   const onSubmit = (data) => {
@@ -53,7 +53,7 @@ const GptSearchBar = () => {
   };
 
   return (
-    <div className="pt-[110px] bg-[#141414] min-h-screen px-2 sm:px-4">
+    <div className="pt-[110px] px-2 sm:px-4">
       <div className="w-full flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -101,6 +101,7 @@ const GptSearchBar = () => {
             {lang[langCode].search}
           </button>
         </form>
+        
       </div>
     </div>
   );
