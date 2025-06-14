@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Header from "./Header";
-import LoginBackground from "../assets/Netflix-LoginPage-img.jpg";
+import LoginBackground from "../assets/Netflix-LoginPage-img.webp";
 import userAvatar  from "../assets/Netflix-avatar.png"
 import {
   createUserWithEmailAndPassword,

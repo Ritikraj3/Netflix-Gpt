@@ -22,7 +22,7 @@ const VideoTitle = ({ movieId, title, overview }) => {
         {overview}
       </p>
 
-      <div className=" flex space-x-4">
+      <div className=" flex gap-4">
         <button className=" bg-white text-black font-semibold px-3 py-1.5 md:px-6 md:py-2 rounded flex items-center space-x-2 justify-center hover:opacity-70 transition duration-200 text-sm md:text-base">
           <svg className="w-4 h-4 md:w-5 md:h-5 fill-current" viewBox="1 0 24 24">
             <path d="M10 5v14l11-7z" />
