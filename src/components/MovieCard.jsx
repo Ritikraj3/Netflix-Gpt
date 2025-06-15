@@ -11,7 +11,6 @@ const MovieCard = ({ posterPath }) => {
         src={IMG_CDN_URL + posterPath}
         alt="Movie Poster"
         loading="eager"
-        decoding="async"
         width="160" // matches md:w-40 (40 * 4 = 160px)
         height="240" // matches md:h-60
       />
