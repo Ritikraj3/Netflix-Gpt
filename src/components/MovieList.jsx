@@ -6,11 +6,11 @@ const MovieList = ({ title, movies }) => {
 
   return (
     <div className="px-4 md:px-6 min-h-[260px]"> {/* Prevent CLS */}
-      <h1 className="text-white text-xl md:text-2xl md:mt-6 font-semibold pt-6 md:pt-3 py-3 md:py-4">
+      <h1 className="text-white text-xl md:text-2xl md:mt-6 font-semibold  py-3 md:py-4">
         {title}
       </h1>
       <div className="flex overflow-x-scroll overflow-y-hidden scrollbar-hide">
-        <div className="flex space-x-6">
+        <div className="flex space-x-6 pb-5">
           {isLoading
             ? Array(6).fill(0).map((_, i) => (
                 <div
