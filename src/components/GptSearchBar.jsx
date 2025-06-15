@@ -40,13 +40,13 @@ const GptSearchBar = () => {
     const gptPrompt = getValues("prompt");
     const movieNames = await getMovieNamesFromGpt(gptPrompt);
     const tmdbResults = await getTmdbResults(movieNames);
-    console.log(tmdbResults);
+
     dispatch(addGptMovieResults({movieResults: tmdbResults, movieNames: movieNames}));
   };
 
   const onSubmit = (data) => {
     const { prompt } = data;
-    console.log(prompt);
+
     reset();
     resetInput();
     refreshPlaceholder();
@@ -57,7 +57,7 @@ const GptSearchBar = () => {
       <div className="w-full flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full max-w-2xl flex items-center bg-white/10 border border-white/20 rounded-full px-3 sm:px-5 py-2 sm:py-3 backdrop-blur-md shadow-lg"
+          className="w-full max-w-2xl flex items-center bg-white/10 border border-white/20 rounded-full px-3 sm:px-4 py-2 sm:py-3 backdrop-blur-md shadow-lg"
         >
           <FaSearch className="text-white/70 text-base sm:text-lg mr-2 sm:mr-3" />
 
@@ -96,7 +96,7 @@ const GptSearchBar = () => {
           <button
             type="submit"
             onClick={handleGptSearch}
-            className="ml-2 sm:ml-3 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1.5 rounded-full transition-all cursor-pointer"
+            className="ml-2 sm:ml-3 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 rounded-full transition-all cursor-pointer"
           >
             {lang[langCode].search}
           </button>

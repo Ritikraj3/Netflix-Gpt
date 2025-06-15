@@ -12,7 +12,7 @@ const GptMovieSuggestions = () => {
       <img
         src={GptLogo}
         alt="Loading..."
-        className="h-20 w-20 animate-spin"
+        className="h-20 w-20 animate-spin [animation-duration:2.5s]"
       />
     </div>
     );

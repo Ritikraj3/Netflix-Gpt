@@ -10,7 +10,6 @@ const useGptMoviePrompt = () => {
     });
 
     const result = response.choices?.[0]?.message?.content || "";
-    console.log(result);
     return result.split(",").map((m) => m.trim());
   };
 

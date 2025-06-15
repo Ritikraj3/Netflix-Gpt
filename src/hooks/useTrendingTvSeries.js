@@ -1,10 +1,12 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { API_OPTIONS } from "../utils/constant";
 import { addTrendingTvSeries } from "../utils/TvSeriesSlice";
 
 const useTrendingTvSeries = () => {
   const dispatch = useDispatch();
+
+  const trendingTvSeries = useSelector((store) => store.TvSeries.trendingTvSeries);
   
   //todo Fetch Data from TMDB API and update store
 
@@ -19,7 +21,7 @@ const useTrendingTvSeries = () => {
       };
     
       useEffect(() => {
-        getTrendingTvSeries();
+       !trendingTvSeries && getTrendingTvSeries();
       }, []);
 
 }
