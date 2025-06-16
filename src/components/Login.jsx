@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Header from "./Header";
+import { Eye, EyeOff } from "lucide-react";
 import LoginBackground from "../assets/Netflix-LoginPage-img.webp";
-import userAvatar  from "../assets/Netflix-avatar.png"
+import userAvatar from "../assets/Netflix-avatar.png";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -26,20 +27,22 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const toggleSignInForm = () => {
     setIsSignin(!isSignin);
   };
 
-   const onSubmit = (data) => {
+  const onSubmit = (data) => {
     const { name, email, password } = data;
     if (!data) return;
 
     setFirebaseError("");
 
     if (!isSignin) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+      createUserWithEmailAndPassword(auth, email, password).then(
+        (userCredential) => {
           const user = userCredential.user;
           updateProfile(user, {
             displayName: name,
@@ -63,7 +66,8 @@ const Login = () => {
                 "Something went wrong. Please try again.";
               setFirebaseError(friendlyMessage);
             });
-        })       
+        }
+      );
     } else {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -147,10 +151,10 @@ const Login = () => {
             </div>
 
             {/* Password input */}
-            <div>
+            <div className="relative">
               <input
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 {...register("password", {
                   required: "Password is required",
@@ -159,8 +163,14 @@ const Login = () => {
                     message: "please enter a valid password",
                   },
                 })}
-                className="w-full bg-gray-700/40 border border-gray-600 text-white px-3 py-2 rounded-md focus:outline-none placeholder-gray-400 text-sm"
+                className="w-full bg-gray-700/40 border border-gray-600 text-white px-3 py-2 pr-10 rounded-md focus:outline-none placeholder-gray-400 text-sm"
               />
+              <span
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+              >
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+              </span>
               {errors.password && (
                 <p className="text-red-500 text-sm">
                   {errors.password.message}
