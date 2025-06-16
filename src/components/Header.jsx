@@ -125,7 +125,7 @@ const Header = () => {
               <img
                 src={showGptSearch ? homeLogo : chatGptLogo}
                 alt="toggle"
-                className="w-4 h-4 sm:w-5 sm:h-5"
+                className="w-5 h-5 sm:w-5 sm:h-5"
               />
               <span className="hidden sm:inline">{showGptSearch ? "Home" : "GPT Search"}</span>
             </button>
