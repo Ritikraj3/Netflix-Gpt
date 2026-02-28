@@ -14,6 +14,7 @@ import lang from "../utils/languageConstants";
 import { addGptMovieResults } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
+  const [error, setError] = React.useState("");
   const dispatch = useDispatch();
   const langCode = useSelector((store) => store.config.lang);
   const { register, handleSubmit, reset, setValue, getValues } = useForm();
@@ -37,11 +38,15 @@ const GptSearchBar = () => {
   const { getTmdbResults } = useTmdbMovieSearch();
 
   const handleGptSearch = async () => {
-    const gptPrompt = getValues("prompt");
-    const movieNames = await getMovieNamesFromGpt(gptPrompt);
-    const tmdbResults = await getTmdbResults(movieNames);
-
-    dispatch(addGptMovieResults({movieResults: tmdbResults, movieNames: movieNames}));
+    setError("");
+    try {
+      const gptPrompt = getValues("prompt");
+      const movieNames = await getMovieNamesFromGpt(gptPrompt);
+      const tmdbResults = await getTmdbResults(movieNames);
+      dispatch(addGptMovieResults({ movieResults: tmdbResults, movieNames }));
+    } catch (err) {
+      setError(err?.message || "Search failed. Please try again.");
+    }
   };
 
   const onSubmit = (data) => {
@@ -54,6 +59,11 @@ const GptSearchBar = () => {
 
   return (
     <div className="pt-[110px] px-2 sm:px-4">
+      {error && (
+        <div className="mb-4 mx-auto max-w-2xl bg-amber-500/20 border border-amber-500/50 text-amber-200 text-sm rounded-lg px-4 py-3">
+          {error}
+        </div>
+      )}
       <div className="w-full flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
