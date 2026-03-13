@@ -13,6 +13,7 @@ import useAnime from "../hooks/useAnime";
 import useKDrama from "../hooks/useKDrama";
 import useWatchlist from "../hooks/useWatchlist";
 import GptSearch from "./GptSearch";
+import TrailerModal from "./TrailerModal";
 import { useSelector } from "react-redux";
 
 const Browse = () => {
@@ -28,11 +29,13 @@ const Browse = () => {
   useAnime();
   useKDrama();
 
+  const uid = useSelector((store) => store.user?.uid);
   const { fetchWatchlist } = useWatchlist();
-  React.useEffect(() => { fetchWatchlist(); }, []);
+  React.useEffect(() => { if (uid) fetchWatchlist(); }, [uid]);
 
   return (
     <div>
+      <TrailerModal />
       <Header />
       {showGptSearch ? (
         <GptSearch />
