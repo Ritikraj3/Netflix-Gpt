@@ -9,6 +9,9 @@ import useTopRatedMovies from "../hooks/useTopRatedMovies";
 import useTopRatedTvSeries from "../hooks/useTopRatedTvSeries";
 import useTrendingTvSeries from "../hooks/useTrendingTvSeries";
 import useTrendingMovies from "../hooks/useTrendingMovies";
+import useAnime from "../hooks/useAnime";
+import useKDrama from "../hooks/useKDrama";
+import useWatchlist from "../hooks/useWatchlist";
 import GptSearch from "./GptSearch";
 import { useSelector } from "react-redux";
 
@@ -22,6 +25,11 @@ const Browse = () => {
   useTopRatedTvSeries();
   useTrendingTvSeries();
   useTrendingMovies();
+  useAnime();
+  useKDrama();
+
+  const { fetchWatchlist } = useWatchlist();
+  React.useEffect(() => { fetchWatchlist(); }, []);
 
   return (
     <div>

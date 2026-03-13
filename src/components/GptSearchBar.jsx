@@ -43,7 +43,10 @@ const GptSearchBar = () => {
       const gptPrompt = getValues("prompt");
       const movieNames = await getMovieNamesFromGpt(gptPrompt);
       const tmdbResults = await getTmdbResults(movieNames);
-      dispatch(addGptMovieResults({ movieResults: tmdbResults, movieNames }));
+      dispatch(addGptMovieResults({
+        movieResults: [tmdbResults.slice(0, 10), tmdbResults.slice(10)],
+        movieNames: ["AI Recommendations", "More Like This"],
+      }));
     } catch (err) {
       setError(err?.message || "Search failed. Please try again.");
     }
