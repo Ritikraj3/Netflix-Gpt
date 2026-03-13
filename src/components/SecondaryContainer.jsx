@@ -1,14 +1,18 @@
-import { useSelector } from "react-redux"; 
+import { useSelector } from "react-redux";
 import MovieList from "./MovieList";
 import Top10Movies from "./Top10Movies";
 
 const SecondaryContainer = () => {
   const movies = useSelector((store) => store.movies);
   const TvSeries = useSelector((store) => store.TvSeries);
+  const watchlist = useSelector((store) => store.watchlist.items);
 
   return (
     <div className="bg-[#141414]">
       <div className="md:-mt-42 relative z-30">
+        {watchlist.length > 0 && (
+          <MovieList title={"My List"} movies={watchlist} />
+        )}
         <MovieList title={"Now Playing"} movies={movies.nowPlayingMovies} />
         <Top10Movies title={"Trending Movies"} movies={movies.trendingMovies} />
         <MovieList title={"Upcoming Movies"} movies={movies.upcomingMovies} />
@@ -16,6 +20,8 @@ const SecondaryContainer = () => {
         <MovieList title={"Top Rated Movies"} movies={movies.topRatedMovies} />
         <MovieList title={"Top Rated Tv Series"} movies={TvSeries.topRatedTvSeries} />
         <MovieList title={"Trending Tv Series"} movies={TvSeries.trendingTvSeries} />
+        <MovieList title={"Anime"} movies={TvSeries.anime} />
+        <MovieList title={"K-Drama"} movies={TvSeries.kDrama} />
       </div>
     </div>
   );
