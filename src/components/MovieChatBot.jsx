@@ -373,10 +373,10 @@ const MovieChatBot = () => {
                 {loading && (
                   <div className="flex items-end gap-2">
                     <div
-                      className="w-6 h-6 rounded-lg shrink-0 flex items-center justify-center text-xs"
+                      className="w-6 h-6 rounded-lg shrink-0 flex items-center justify-center"
                       style={{ background: CHAT_THEME.accentGrad }}
                     >
-                      {botIcon}
+                      <BotIcon size={12} color="white" />
                     </div>
                     <div
                       className="rounded-2xl rounded-bl-sm px-4 py-3 border flex gap-1.5 items-center"
