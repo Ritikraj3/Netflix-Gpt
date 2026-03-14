@@ -6,6 +6,7 @@ import gptReducer from "./gptSlice"
 import configReducer from "./configSlice"
 import watchlistReducer from "./watchlistSlice"
 import trailerModalReducer from "./trailerModalSlice"
+import chatReducer from "./chatSlice"
 
 const appStore = configureStore({
     reducer: {
@@ -16,6 +17,7 @@ const appStore = configureStore({
         config: configReducer,
         watchlist: watchlistReducer,
         trailerModal: trailerModalReducer,
+        chat: chatReducer,
     },
 })
 

@@ -1,28 +1,28 @@
-import React from "react";
-import { IMG_CDN_URL } from "../utils/constant";
+import MovieCard from "./MovieCard";
 
-const Top10MovieCard = ({ posterPath, index }) => {
+const Top10MovieCard = ({ posterPath, index, movie }) => {
   return (
-    <div className={`relative w-32 md:w-40  flex-shrink-0 ${
-    index === 0 ? "ml-10 md:ml-24" : ""
-  }`}>
-      {/* Big Ranking Number */}
-      <h1
-        className="absolute -left-8 md:-left-28 bottom-0 text-[90px] md:text-[220px] 
-                   font-extrabold text-white opacity-20 z-0 leading-none tracking-tight 
-                   drop-shadow-md pointer-events-none select-none"
+    <div className="relative flex-shrink-0 flex items-end">
+      {/* Outlined ranking number */}
+      <span
+        className="leading-none font-black select-none pointer-events-none shrink-0 text-[100px] md:text-[160px]"
+        style={{
+          WebkitTextStroke: "2px rgba(255,255,255,0.35)",
+          color: "transparent",
+          marginRight: "-14px",
+          zIndex: 0,
+        }}
       >
         {index + 1}
-      </h1>
+      </span>
 
-      {/* Movie Poster */}
-      <img
-        src={IMG_CDN_URL + posterPath}
-        alt="Top Movie Poster"
-        className="relative z-10 rounded-md hover:scale-105 transition-transform duration-300 shadow-lg"
-      />
+      {/* Reuse MovieCard — identical overlay, buttons, and behaviour */}
+      <div className="relative z-10">
+        <MovieCard posterPath={posterPath} movie={movie} />
+      </div>
     </div>
   );
 };
+
 
 export default Top10MovieCard;

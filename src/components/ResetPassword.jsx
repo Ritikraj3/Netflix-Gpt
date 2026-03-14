@@ -4,8 +4,12 @@ import { useForm } from "react-hook-form";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { firebaseErrorMessages } from "../utils/firebaseErrorMessage";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
+  const user = useSelector((store) => store.user);
   const {
     register,
     handleSubmit,
@@ -47,6 +51,21 @@ const ResetPassword = () => {
 
         <div className="relative z-10">
           <Header />
+
+          {/* Back button — only shown when navigating from browse (logged in) */}
+          {user && (
+            <div className="px-6 pt-[100px]">
+              <button
+                onClick={() => navigate("/browse")}
+                className="flex items-center gap-2 text-white/80 hover:text-white text-sm transition"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Browse
+              </button>
+            </div>
+          )}
 
           {/* Centered Reset Box */}
           <div className="flex justify-center items-center min-h-[calc(100vh-80px)]">
