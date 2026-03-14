@@ -16,11 +16,13 @@ import {
   DEFAULT_BOT_ICON,
 } from "../utils/chatConfig";
 
-const chatClient = new OpenAI({
-  apiKey: import.meta.env.VITE_CHATBOT_API_KEY,
-  baseURL: OPENROUTER_BASE_URL,
-  dangerouslyAllowBrowser: true,
-});
+const chatClient = import.meta.env.VITE_CHATBOT_API_KEY
+  ? new OpenAI({
+      apiKey: import.meta.env.VITE_CHATBOT_API_KEY,
+      baseURL: OPENROUTER_BASE_URL,
+      dangerouslyAllowBrowser: true,
+    })
+  : null;
 
 const SYSTEM_MESSAGE = { role: "system", content: CHATBOT_SYSTEM_PROMPT };
 
@@ -155,7 +157,7 @@ const MovieChatBot = () => {
 
   const handleSend = async (text) => {
     const userText = (text || input).trim();
-    if (!userText || loading) return;
+    if (!userText || loading || !chatClient) return;
     setInput("");
 
     const sessionId = activeSessionId;
