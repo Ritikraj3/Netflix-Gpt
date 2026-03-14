@@ -112,7 +112,7 @@ const Header = () => {
         <div
           className={`flex items-center justify-between h-[90px] ${
             !isBrowsePage ? "2xl:px-[354px]" : ""
-          } md:px-14 px-2 mb-[-120px] absolute top-0 w-full z-10 bg-gradient-to-b from-black/70 to-transparent select-none`}
+          } md:px-14 px-2 mb-[-120px] absolute top-0 w-full z-10 bg-black md:bg-gradient-to-b md:from-black/70 md:to-transparent select-none`}
         >
           <img
             src={netflixLogo}
