@@ -24,16 +24,22 @@ const VideoTitle = ({ movieId, title, overview }) => {
         {overview}
       </p>
 
-      <div className="flex gap-2 sm:gap-3">
+      <div className="hidden sm:flex gap-2 sm:gap-3">
         <button className="bg-white text-black font-semibold px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 rounded flex items-center gap-1.5 sm:gap-2 hover:bg-white/80 transition duration-200 text-xs sm:text-sm md:text-base">
-          <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 fill-current" viewBox="1 0 24 24">
+          <svg
+            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 fill-current"
+            viewBox="1 0 24 24"
+          >
             <path d="M10 5v14l11-7z" />
           </svg>
           Play
         </button>
 
         <button className="bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 rounded flex items-center gap-1.5 sm:gap-2 hover:bg-white/30 transition duration-200 text-xs sm:text-sm md:text-base">
-          <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 fill-current" viewBox="0 0 24 24">
+          <svg
+            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 fill-current"
+            viewBox="0 0 24 24"
+          >
             <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z" />
           </svg>
           More Info
