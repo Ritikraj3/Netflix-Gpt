@@ -110,9 +110,9 @@ const Header = () => {
     <>
       <header className="absolute top-0 w-full z-50">
         <div
-          className={`flex items-center justify-between h-[90px] ${
+          className={`flex items-start justify-between h-[90px] ${
             !isBrowsePage ? "2xl:px-[354px]" : ""
-          } md:px-14 px-2 mb-[-120px] absolute top-0 w-full z-10 bg-black md:bg-gradient-to-b md:from-black/70 md:to-transparent select-none`}
+          } md:px-14 px-2 mb-[-120px] absolute top-0 w-full z-10 bg-gradient-to-b from-black/70 to-transparent select-none`}
         >
           <img
             src={netflixLogo}
@@ -122,7 +122,7 @@ const Header = () => {
           <img
             src={miniLogo}
             alt="Netflix"
-            className="inline-block sm:hidden w-8 h-auto"
+            className="inline-block sm:hidden w-8 h-auto mt-[-4px]"
           />
 
           {!isBrowsePage && !isResetpassword && (
@@ -160,7 +160,7 @@ const Header = () => {
 
               <div className="relative" ref={dropdownRef}>
                 <button
-                  className="flex items-center gap-1.5"
+                  className="flex items-center gap-1.5 mt-[4px]"
                   onClick={() => setShowDropdown(!showDropdown)}
                 >
                   <UserAvatar
