@@ -42,6 +42,26 @@ export const FIREBASE_WATCHLIST_COLLECTION = "watchlist";
 export const SESSION_TITLE_MAX_LEN = 45;
 export const LAST_MSG_PREVIEW_LEN = 80;
 
+// ─── NetBot Icon Map (react-icons/fa + react-icons/md only) ──────────────────
+import {
+  FaFilm, FaRobot, FaStar, FaPlay, FaFire,
+  FaCamera, FaVideo, FaGamepad, FaMagic, FaSpaceShuttle,
+} from "react-icons/fa";
+import {
+  MdMovie, MdLocalMovies, MdLiveTv, MdStars,
+  MdTheaterComedy, MdAutoAwesome, MdWhatshot,
+  MdSlowMotionVideo,
+} from "react-icons/md";
+
+export const BOT_ICON_MAP = {
+  FaFilm, FaCamera, FaVideo, FaRobot,
+  FaFire, FaStar, FaPlay, FaGamepad, FaMagic, FaSpaceShuttle,
+  MdMovie, MdLocalMovies, MdLiveTv, MdStars,
+  MdTheaterComedy, MdAutoAwesome, MdWhatshot, MdSlowMotionVideo,
+};
+
+export const DEFAULT_BOT_ICON = "FaFilm";
+
 // ─── Theme ────────────────────────────────────────────────────────────────────
 export const CHAT_THEME = {
   panelBg:       "#212121",

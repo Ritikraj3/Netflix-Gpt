@@ -12,6 +12,8 @@ import {
   SESSION_TITLE_MAX_LEN,
   LAST_MSG_PREVIEW_LEN,
   CHAT_THEME,
+  BOT_ICON_MAP,
+  DEFAULT_BOT_ICON,
 } from "../utils/chatConfig";
 
 const chatClient = new OpenAI({
@@ -84,7 +86,8 @@ const MovieChatBot = () => {
   const dispatch = useDispatch();
   const { sessions, activeSessionId, activeMessages, sessionsLoaded } =
     useSelector((store) => store.chat);
-  const botIcon = useSelector((store) => store.user?.botIcon || "{botIcon}");
+  const botIconKey = useSelector((store) => store.user?.botIcon || DEFAULT_BOT_ICON);
+  const BotIcon = BOT_ICON_MAP[botIconKey] || BOT_ICON_MAP[DEFAULT_BOT_ICON];
   const { fetchSessions, createSession, saveSession, deleteSession } = useChatHistory();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -116,14 +119,14 @@ const MovieChatBot = () => {
       .map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
   }, [activeSessionId]);
 
-  // Instant jump to bottom when chat panel opens (avoids visible scroll from top)
+  // Instant jump to bottom when chat panel opens or when switching back from sessions panel
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !showSessions) {
       requestAnimationFrame(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
       });
     }
-  }, [isOpen]);
+  }, [isOpen, showSessions]);
 
   // Smooth scroll when new messages arrive
   useEffect(() => {
@@ -222,10 +225,10 @@ const MovieChatBot = () => {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                     style={{ background: CHAT_THEME.accentGrad }}
                   >
-                    {botIcon}
+                    <BotIcon size={20} color="white" />
                   </div>
                 </div>
                 <div>
@@ -277,7 +280,7 @@ const MovieChatBot = () => {
 
               {sessions.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-3 py-10">
-                  <div className="w-12 h-12 rounded-2xl bg-white/6 flex items-center justify-center text-2xl">{botIcon}</div>
+                  <div className="w-12 h-12 rounded-2xl bg-white/6 flex items-center justify-center"><BotIcon size={24} color="rgba(255,255,255,0.4)" /></div>
                   <p className="text-white/30 text-sm text-center leading-relaxed">
                     No previous chats yet.<br />Start a conversation!
                   </p>
@@ -331,7 +334,7 @@ const MovieChatBot = () => {
                         className="w-6 h-6 rounded-lg shrink-0 mb-0.5 flex items-center justify-center text-xs"
                         style={{ background: CHAT_THEME.accentGrad }}
                       >
-                        {botIcon}
+                        <BotIcon size={12} color="white" />
                       </div>
                     )}
                     <div

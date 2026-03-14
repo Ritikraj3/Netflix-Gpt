@@ -5,33 +5,38 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../utils/firebase";
 import { addUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
+import UserAvatar from "./UserAvatar";
+import { BOT_ICON_MAP, DEFAULT_BOT_ICON } from "../utils/chatConfig";
 
-const PRESET_AVATARS = [
-  // Human / cartoon
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4", label: "Felix" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&backgroundColor=ffd5dc", label: "Mia" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&backgroundColor=c0aede", label: "Leo" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=Sara&backgroundColor=d1f4cc", label: "Sara" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=Jake&backgroundColor=ffeaad", label: "Jake" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=Zoe&backgroundColor=ffcfad", label: "Zoe" },
-  // Bot / robot
-  { url: "https://api.dicebear.com/9.x/bottts/svg?seed=Rusty&backgroundColor=b6e3f4", label: "Rusty" },
-  { url: "https://api.dicebear.com/9.x/bottts/svg?seed=Neon&backgroundColor=d1f4cc", label: "Neon" },
-  { url: "https://api.dicebear.com/9.x/bottts/svg?seed=Volt&backgroundColor=c0aede", label: "Volt" },
-  { url: "https://api.dicebear.com/9.x/bottts/svg?seed=Spark&backgroundColor=ffd5dc", label: "Spark" },
-  // Pixel art
-  { url: "https://api.dicebear.com/9.x/pixel-art/svg?seed=Alpha&backgroundColor=b6e3f4", label: "Alpha" },
-  { url: "https://api.dicebear.com/9.x/pixel-art/svg?seed=Beta&backgroundColor=ffd5dc", label: "Beta" },
-  { url: "https://api.dicebear.com/9.x/pixel-art/svg?seed=Pixel&backgroundColor=ffeaad", label: "Pixel" },
-  { url: "https://api.dicebear.com/9.x/pixel-art/svg?seed=Retro&backgroundColor=d1f4cc", label: "Retro" },
-  // Fun emoji
-  { url: "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Chill&backgroundColor=b6e3f4", label: "Chill" },
-  { url: "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Fire&backgroundColor=ffcfad", label: "Fire" },
+// ─── Avatar presets (DiceBear modern styles) ──────────────────────────────────
+const BASE = "https://api.dicebear.com/9.x";
+const AVATAR_PRESETS = [
+  // notionists — elegant illustrated characters
+  { key: "n1",  url: `${BASE}/notionists/svg?seed=Alice&backgroundColor=b6e3f4` },
+  { key: "n2",  url: `${BASE}/notionists/svg?seed=Felix&backgroundColor=ffd5dc` },
+  { key: "n3",  url: `${BASE}/notionists/svg?seed=Maya&backgroundColor=c0aede` },
+  { key: "n4",  url: `${BASE}/notionists/svg?seed=Zara&backgroundColor=d1f4cc` },
+  // adventurer — cartoon adventure characters
+  { key: "a1",  url: `${BASE}/adventurer/svg?seed=Lily&backgroundColor=b6e3f4` },
+  { key: "a2",  url: `${BASE}/adventurer/svg?seed=Jake&backgroundColor=ffd5dc` },
+  { key: "a3",  url: `${BASE}/adventurer/svg?seed=Leo&backgroundColor=ffeaad` },
+  { key: "a4",  url: `${BASE}/adventurer/svg?seed=Sam&backgroundColor=c0aede` },
+  // lorelei — soft illustrated portraits
+  { key: "l1",  url: `${BASE}/lorelei/svg?seed=Anna&backgroundColor=ffd5dc` },
+  { key: "l2",  url: `${BASE}/lorelei/svg?seed=Chris&backgroundColor=b6e3f4` },
+  { key: "l3",  url: `${BASE}/lorelei/svg?seed=Ryan&backgroundColor=d1f4cc` },
+  { key: "l4",  url: `${BASE}/lorelei/svg?seed=Mia&backgroundColor=ffeaad` },
+  // big-smile — expressive fun characters
+  { key: "b1",  url: `${BASE}/big-smile/svg?seed=Ethan&backgroundColor=b6e3f4` },
+  { key: "b2",  url: `${BASE}/big-smile/svg?seed=Nora&backgroundColor=ffcfad` },
+  { key: "b3",  url: `${BASE}/big-smile/svg?seed=Owen&backgroundColor=c0aede` },
+  { key: "b4",  url: `${BASE}/big-smile/svg?seed=Ella&backgroundColor=d1f4cc` },
+  // croodles — cute playful doodles
+  { key: "c1",  url: `${BASE}/croodles/svg?seed=Pixel&backgroundColor=ffd5dc` },
+  { key: "c2",  url: `${BASE}/croodles/svg?seed=Nova&backgroundColor=b6e3f4` },
 ];
 
-const BOT_ICONS = ["🎬", "🎥", "🍿", "🎞️", "🎭", "🦸", "🤖", "🦊", "🐱", "🦅", "💫", "🌟", "🔥", "⚡", "🎮", "🎯", "🧠", "🦄"];
-
-// Resize an image File to a 150×150 JPEG data URL
+// Resize an uploaded image to 150×150 JPEG data URL
 const resizeImage = (file) =>
   new Promise((resolve) => {
     const reader = new FileReader();
@@ -44,9 +49,7 @@ const resizeImage = (file) =>
         canvas.height = SIZE;
         const ctx = canvas.getContext("2d");
         const min = Math.min(img.width, img.height);
-        const sx = (img.width - min) / 2;
-        const sy = (img.height - min) / 2;
-        ctx.drawImage(img, sx, sy, min, min, 0, 0, SIZE, SIZE);
+        ctx.drawImage(img, (img.width - min) / 2, (img.height - min) / 2, min, min, 0, 0, SIZE, SIZE);
         resolve(canvas.toDataURL("image/jpeg", 0.82));
       };
       img.src = e.target.result;
@@ -62,15 +65,14 @@ const ManageProfile = ({ onClose }) => {
 
   const [selectedAvatar, setSelectedAvatar] = useState(user?.photoURL || "");
   const [displayName, setDisplayName] = useState(user?.displayName || "");
-  const [botIcon, setBotIcon] = useState(user?.botIcon || "🎬");
+  const [botIconKey, setBotIconKey] = useState(user?.botIcon || DEFAULT_BOT_ICON);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const dataUrl = await resizeImage(file);
-    setSelectedAvatar(dataUrl);
+    setSelectedAvatar(await resizeImage(file));
   };
 
   const handleSave = async () => {
@@ -81,20 +83,18 @@ const ManageProfile = ({ onClose }) => {
       const photoURL = selectedAvatar || user?.photoURL;
       const isRemoteUrl = photoURL?.startsWith("http");
 
-      // Only update Auth photoURL for proper URLs (not base64 — Auth has length limits)
       await updateProfile(auth.currentUser, {
         displayName: displayName.trim(),
         ...(isRemoteUrl ? { photoURL } : {}),
       });
 
-      // Persist everything (including base64 avatar + botIcon) to Firestore
       await setDoc(
         doc(db, "users", user.uid, "profile", "info"),
-        { displayName: displayName.trim(), photoURL, botIcon, updatedAt: Date.now() },
+        { displayName: displayName.trim(), photoURL, botIcon: botIconKey, updatedAt: Date.now() },
         { merge: true }
       );
 
-      dispatch(addUser({ ...user, displayName: displayName.trim(), photoURL, botIcon }));
+      dispatch(addUser({ ...user, displayName: displayName.trim(), photoURL, botIcon: botIconKey }));
       onClose();
     } catch (err) {
       setError("Failed to save. Please try again.");
@@ -134,58 +134,44 @@ const ManageProfile = ({ onClose }) => {
           {/* Current avatar preview */}
           <div className="flex flex-col items-center gap-3">
             <div className="relative">
-              <img
+              <UserAvatar
                 src={selectedAvatar || user?.photoURL}
-                alt="current avatar"
+                size={80}
                 className="w-20 h-20 rounded-2xl object-cover"
-                style={{ background: "#2a2a2a" }}
               />
               <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center text-[10px] text-white font-bold">✎</span>
             </div>
-
-            {/* Upload from device */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleFileChange}
-            />
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white/70 hover:text-white text-xs transition-all duration-150 hover:bg-white/6"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white/70 hover:text-white text-xs transition-all hover:bg-white/6"
               style={{ border: "1px solid rgba(255,255,255,0.1)" }}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
               Upload from device
             </button>
           </div>
 
-          {/* Preset avatar grid */}
+          {/* Boring-avatars preset grid */}
           <div>
             <p className="text-white/50 text-[11px] uppercase tracking-widest mb-3">Or pick a preset</p>
-            <div className="grid grid-cols-4 gap-2">
-              {PRESET_AVATARS.map((avatar) => (
-                <button
-                  key={avatar.url}
-                  onClick={() => setSelectedAvatar(avatar.url)}
-                  className={`relative rounded-xl overflow-hidden aspect-square transition-all duration-150 ${
-                    selectedAvatar === avatar.url
-                      ? "ring-2 ring-red-500 scale-105"
-                      : "hover:scale-105 opacity-70 hover:opacity-100"
-                  }`}
-                  style={{ background: "#2a2a2a" }}
-                  title={avatar.label}
-                >
-                  <img src={avatar.url} alt={avatar.label} className="w-full h-full object-cover" />
-                  {selectedAvatar === avatar.url && (
-                    <span className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-red-600 rounded-full flex items-center justify-center text-[9px] text-white">✓</span>
-                  )}
-                </button>
-              ))}
+            <div className="grid grid-cols-6 gap-2">
+              {AVATAR_PRESETS.map((preset) => {
+                const isSelected = selectedAvatar === preset.url;
+                return (
+                  <button
+                    key={preset.key}
+                    onClick={() => setSelectedAvatar(preset.url)}
+                    className={`rounded-xl overflow-hidden aspect-square transition-all duration-150 ${
+                      isSelected ? "ring-2 ring-red-500 scale-110" : "opacity-70 hover:opacity-100 hover:scale-105"
+                    }`}
+                  >
+                    <img src={preset.url} alt="avatar" className="w-full h-full object-cover" />
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -203,24 +189,29 @@ const ManageProfile = ({ onClose }) => {
             />
           </div>
 
-          {/* Bot icon picker */}
+          {/* NetBot icon picker */}
           <div>
-            <p className="text-white/50 text-[11px] uppercase tracking-widest mb-3">Chatbot Icon</p>
-            <div className="grid grid-cols-9 gap-1.5">
-              {BOT_ICONS.map((icon) => (
-                <button
-                  key={icon}
-                  onClick={() => setBotIcon(icon)}
-                  className={`aspect-square rounded-xl text-lg flex items-center justify-center transition-all duration-150 ${
-                    botIcon === icon
-                      ? "ring-2 ring-red-500 scale-110"
-                      : "hover:scale-110 opacity-60 hover:opacity-100"
-                  }`}
-                  style={{ background: botIcon === icon ? "rgba(220,38,38,0.15)" : "#2a2a2a" }}
-                >
-                  {icon}
-                </button>
-              ))}
+            <p className="text-white/50 text-[11px] uppercase tracking-widest mb-3">NetBot Icon</p>
+            <div className="grid grid-cols-6 gap-2">
+              {Object.entries(BOT_ICON_MAP).map(([key, IconComponent]) => {
+                const isSelected = botIconKey === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setBotIconKey(key)}
+                    className={`aspect-square rounded-xl flex items-center justify-center transition-all duration-150 ${
+                      isSelected ? "ring-2 ring-red-500 scale-110" : "opacity-50 hover:opacity-100 hover:scale-105"
+                    }`}
+                    style={{ background: isSelected ? "rgba(220,38,38,0.15)" : "#2a2a2a" }}
+                    title={key}
+                  >
+                    <IconComponent
+                      size={22}
+                      color={isSelected ? "#ef4444" : "rgba(255,255,255,0.7)"}
+                    />
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -255,7 +246,6 @@ const ManageProfile = ({ onClose }) => {
 
           {error && <p className="text-red-400 text-xs text-center">{error}</p>}
 
-          {/* Save button */}
           <button
             onClick={handleSave}
             disabled={saving}

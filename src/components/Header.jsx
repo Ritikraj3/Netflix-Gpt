@@ -14,6 +14,7 @@ import { toggleGptSearchView } from "../utils/gptSlice";
 import { SUPPORTED_LANGUAGES } from "../utils/constant";
 import { changeLanguage } from "../utils/configSlice";
 import ManageProfile from "./ManageProfile";
+import UserAvatar from "./UserAvatar";
 
 const WatchlistItem = () => {
   const count = useSelector((store) => store.watchlist?.items?.length ?? 0);
@@ -149,10 +150,10 @@ const Header = () => {
                 className="flex items-center gap-1.5"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                <img
-                  className="w-9 h-9 rounded-lg cursor-pointer ring-2 ring-transparent hover:ring-white/40 transition"
+                <UserAvatar
                   src={user?.photoURL || avatarLogo}
-                  alt="user-avatar"
+                  size={36}
+                  className="w-9 h-9 rounded-lg cursor-pointer transition object-cover"
                 />
                 <svg
                   className={`w-3.5 h-3.5 text-white transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`}
@@ -170,10 +171,10 @@ const Header = () => {
                   <div className="flex items-center gap-3 px-4 py-4"
                     style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
                   >
-                    <img
+                    <UserAvatar
                       src={user?.photoURL || avatarLogo}
-                      alt="avatar"
-                      className="w-11 h-11 rounded-xl shrink-0"
+                      size={44}
+                      className="w-11 h-11 rounded-xl shrink-0 object-cover"
                     />
                     <div className="min-w-0">
                       <p className="text-white text-sm font-semibold truncate">
