@@ -4,14 +4,31 @@ import avatarLogo from "../assets/Netflix-avatar.png";
 import chatGptLogo from "../assets/chatgpt-4.svg";
 import miniLogo from "../assets/miniLogo.webp";
 import homeLogo from "../assets/home.svg";
-import { auth } from "../utils/firebase";
+import { auth, db } from "../utils/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
 import { toggleGptSearchView } from "../utils/gptSlice";
 import { SUPPORTED_LANGUAGES } from "../utils/constant";
 import { changeLanguage } from "../utils/configSlice";
+import ManageProfile from "./ManageProfile";
+
+const WatchlistItem = () => {
+  const count = useSelector((store) => store.watchlist?.items?.length ?? 0);
+  return (
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/80 text-sm">
+      <span className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center shrink-0 text-base">🔖</span>
+      <span className="flex-1">My Watchlist</span>
+      {count > 0 && (
+        <span className="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full min-w-[20px] text-center">
+          {count}
+        </span>
+      )}
+    </div>
+  );
+};
 
 const Header = () => {
   const location = useLocation();
@@ -24,6 +41,7 @@ const Header = () => {
   const isResetpassword = location.pathname === "/reset-password";
 
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showManageProfile, setShowManageProfile] = useState(false);
   const dropdownRef = useRef();
 
   const handleGptSearchClick = () => {
@@ -31,18 +49,25 @@ const Header = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const { uid, email, displayName, photoURL } = user;
-        dispatch(
-          addUser({
-            uid,
-            email,
-            displayName,
-            photoURL: photoURL || avatarLogo,
-          })
-        );
-        if (location.pathname !== "/browse") navigate("/browse");
+
+        // Load saved profile (custom avatar, botIcon) from Firestore
+        let profile = {};
+        try {
+          const snap = await getDoc(doc(db, "users", uid, "profile", "info"));
+          if (snap.exists()) profile = snap.data();
+        } catch (_) {}
+
+        dispatch(addUser({
+          uid,
+          email,
+          displayName: profile.displayName || displayName,
+          photoURL: profile.photoURL || photoURL || avatarLogo,
+          botIcon: profile.botIcon || "🎬",
+        }));
+        if (location.pathname !== "/browse" && location.pathname !== "/reset-password") navigate("/browse");
       } else {
         dispatch(removeUser());
         if (location.pathname !== "/reset-password") navigate("/");
@@ -73,6 +98,7 @@ const Header = () => {
   };
 
   return (
+    <>
     <header className="absolute top-0 w-full z-50">
       <div
         className={`flex items-center justify-between h-[90px] ${
@@ -105,19 +131,6 @@ const Header = () => {
 
         {isBrowsePage && (
           <div className="flex items-center gap-3 relative">
-            {showGptSearch && (
-              <select
-                className="text-white border-2 cursor-pointer rounded px-2 py-1"
-                onChange={handleLanguageChange}
-              >
-                {SUPPORTED_LANGUAGES.map((lang) => (
-                  <option className="text-black" key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
-            )}
-
             <button
               onClick={handleGptSearchClick}
               className="flex items-center gap-2 px-3 py-2 bg-white text-black hover:bg-gray-300 cursor-pointer rounded-lg text-xs sm:text-sm transition-all duration-200"
@@ -131,52 +144,107 @@ const Header = () => {
             </button>
 
             
-            <button
-              onClick={handleSignOut}
-              className="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-3 py-2 rounded-lg cursor-pointer hidden sm:inline-block"
-            >
-              Sign Out
-            </button>
-
             <div className="relative" ref={dropdownRef}>
               <button
-                className="flex items-center gap-1"
+                className="flex items-center gap-1.5"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 <img
-                  className="w-9 h-9 rounded cursor-pointer"
+                  className="w-9 h-9 rounded-lg cursor-pointer ring-2 ring-transparent hover:ring-white/40 transition"
                   src={user?.photoURL || avatarLogo}
                   alt="user-avatar"
                 />
                 <svg
-                  className="w-4 h-4 text-white sm:hidden"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  className={`w-3.5 h-3.5 text-white transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`}
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {showDropdown && (
-                <div
-                  className="absolute right-0 top-12 mt-2 w-48 rounded-xl shadow-xl z-50 backdrop-blur-md bg-white/10 text-white animate-fade-in"
+                <div className="absolute right-0 top-12 mt-1 w-64 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                  style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
-                  <ul className="text-sm p-3 space-y-2">
-                    <li className="hover:bg-white/10 rounded px-3 py-1 cursor-pointer">Profile</li>
-                    <li className="hover:bg-white/10 rounded px-3 py-1 cursor-pointer">Manage Profiles</li>
-                    <li className="hover:bg-white/10 rounded px-3 py-1 cursor-pointer">Account</li>
-                    <li className="hover:bg-white/10 rounded px-3 py-1 cursor-pointer">Help Centre</li>
-                    <li className="sm:hidden">
-                      <button
-                        onClick={handleSignOut}
-                        className="bg-red-600 hover:bg-red-700 text-white text-sm font-medium w-full py-1.5 rounded-lg"
-                      >
-                        Sign Out
-                      </button>
-                    </li>
-                  </ul>
+                  {/* User card */}
+                  <div className="flex items-center gap-3 px-4 py-4"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+                  >
+                    <img
+                      src={user?.photoURL || avatarLogo}
+                      alt="avatar"
+                      className="w-11 h-11 rounded-xl shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-white text-sm font-semibold truncate">
+                        {user?.displayName || "Netflix User"}
+                      </p>
+                      <p className="text-white/45 text-[11px] truncate">{user?.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="px-2 py-2 space-y-0.5">
+                    {/* Watchlist */}
+                    <WatchlistItem />
+
+                    {/* Manage Profile */}
+                    <button
+                      onClick={() => { setShowManageProfile(true); setShowDropdown(false); }}
+                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-white/80 hover:text-white hover:bg-white/6 transition-all duration-150 text-sm"
+                    >
+                      <span className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </span>
+                      <span>Manage Profile</span>
+                    </button>
+
+                    {/* GPT Search toggle */}
+                    <button
+                      onClick={() => { dispatch(toggleGptSearchView()); setShowDropdown(false); }}
+                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-white/80 hover:text-white hover:bg-white/6 transition-all duration-150 text-sm"
+                    >
+                      <span className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center shrink-0">
+                        <img src={chatGptLogo} alt="gpt" className="w-4 h-4" />
+                      </span>
+                      <span>{showGptSearch ? "Back to Home" : "GPT Search"}</span>
+                    </button>
+
+                    {/* Language — only visible on GPT Search page */}
+                    {showGptSearch && (
+                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/6 transition-all duration-150">
+                        <span className="w-7 h-7 rounded-lg bg-white/8 flex items-center justify-center shrink-0 text-base">🌐</span>
+                        <select
+                          onChange={handleLanguageChange}
+                          className="flex-1 bg-transparent text-white/80 text-sm outline-none cursor-pointer"
+                        >
+                          {SUPPORTED_LANGUAGES.map((lang) => (
+                            <option className="text-black bg-white" key={lang.code} value={lang.code}>
+                              {lang.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sign Out */}
+                  <div className="px-2 pb-2" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-3 w-full px-3 py-2.5 mt-1.5 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-150 text-sm font-medium"
+                    >
+                      <span className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                      </span>
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -185,6 +253,9 @@ const Header = () => {
         )}
       </div>
     </header>
+
+    {showManageProfile && <ManageProfile onClose={() => setShowManageProfile(false)} />}
+    </>
   );
 };
 

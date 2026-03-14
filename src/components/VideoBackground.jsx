@@ -3,7 +3,7 @@ import useMovieTrailer from "../hooks/useMovieTrailer";
 import { useEffect, useRef, useState } from "react";
 import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
-const VideoBackground = ({ movieId }) => {
+const VideoBackground = ({ movieId, backdropPath }) => {
   useMovieTrailer({ movieId });
 
   const trailerVideo = useSelector((store) => store.movies?.trailerVideo);
@@ -28,8 +28,8 @@ const VideoBackground = ({ movieId }) => {
   };
 
   return (
-    <div className="relative w-screen ">
-      {trailerVideo && (
+    <div className="relative w-screen">
+      {trailerVideo ? (
         <>
           <iframe
             ref={iframeRef}
@@ -39,15 +39,8 @@ const VideoBackground = ({ movieId }) => {
             allow="autoplay; fullscreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           />
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 z-10 pointer-events-none">
-            {/* Left fade — where title sits */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
-            {/* Bottom fade — blends into content below */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/10 to-transparent" />
-            {/* Top fade — softens header area */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent" />
-          </div>
+          {/* Click blocker — prevents iframe from capturing clicks to play/pause */}
+          <div className="absolute inset-0 z-10" />
 
           {/* Speaker toggle button */}
           <button
@@ -57,7 +50,20 @@ const VideoBackground = ({ movieId }) => {
             {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
           </button>
         </>
-      )}
+      ) : backdropPath ? (
+        <img
+          src={`https://image.tmdb.org/t/p/w1280${backdropPath}`}
+          alt="Movie Backdrop"
+          className="w-full aspect-video md:h-screen object-cover"
+        />
+      ) : null}
+
+      {/* Gradient overlay — always shown over both trailer and backdrop */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent" />
+      </div>
     </div>
   );
 };

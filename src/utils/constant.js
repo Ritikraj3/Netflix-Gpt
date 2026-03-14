@@ -15,4 +15,5 @@ export const SUPPORTED_LANGUAGES = [
   {name:"japanese",code:"ja"},
   {name:"korean",code:"ko"},]
 
-  export const OPENAI_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+export const OPENAI_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+export const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY;

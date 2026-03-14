@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React from "react";
 import Header from "./Header";
 import useNowPlayingMovies from "../hooks/useNowPlayingMovies";
 import SecondaryContainer from "./SecondaryContainer";
@@ -11,9 +11,13 @@ import useTrendingTvSeries from "../hooks/useTrendingTvSeries";
 import useTrendingMovies from "../hooks/useTrendingMovies";
 import useAnime from "../hooks/useAnime";
 import useKDrama from "../hooks/useKDrama";
+import useBollywoodTrending from "../hooks/useBollywoodTrending";
+import useBollywoodPopular from "../hooks/useBollywoodPopular";
+import useBollywoodTopRated from "../hooks/useBollywoodTopRated";
 import useWatchlist from "../hooks/useWatchlist";
 import GptSearch from "./GptSearch";
 import TrailerModal from "./TrailerModal";
+import MovieChatBot from "./MovieChatBot";
 import { useSelector } from "react-redux";
 
 const Browse = () => {
@@ -28,6 +32,9 @@ const Browse = () => {
   useTrendingMovies();
   useAnime();
   useKDrama();
+  useBollywoodTrending();
+  useBollywoodPopular();
+  useBollywoodTopRated();
 
   const uid = useSelector((store) => store.user?.uid);
   const { fetchWatchlist } = useWatchlist();
@@ -44,6 +51,7 @@ const Browse = () => {
           <MainContainer /> <SecondaryContainer />
         </>
       )}
+      <MovieChatBot />
 
       {/* 
         MainContainer

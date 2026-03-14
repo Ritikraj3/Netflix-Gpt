@@ -27,7 +27,9 @@ const useMovieLogo = ({ movieId }) => {
   };
 
   useEffect(() => {
-    if (movieId) fetchMovieLogo();
+    if (!movieId) return;
+    dispatch(addMovieLogo(null));
+    fetchMovieLogo();
   }, [movieId]);
 };
 

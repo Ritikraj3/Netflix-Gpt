@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import VideoTitle from "./VideoTitle";
 import VideoBackground from "./VideoBackground";
 import { useSelector } from "react-redux";
@@ -10,7 +10,12 @@ const MainContainer = () => {
   const topRated = useSelector((store) => store.movies?.topRatedMovies);
   const upcoming = useSelector((store) => store.movies?.upcomingMovies);
 
+  // Lock the chosen movie once — never re-pick as more lists arrive
+  const lockedMovie = useRef(null);
+
   const mainMovie = useMemo(() => {
+    if (lockedMovie.current) return lockedMovie.current;
+
     const allMovies = [
       ...(nowPlaying || []),
       ...(popular || []),
@@ -20,16 +25,17 @@ const MainContainer = () => {
     ].filter((m) => m?.id && m?.overview && m?.title);
 
     if (!allMovies.length) return null;
-    return allMovies[Math.floor(Math.random() * allMovies.length)];
+    lockedMovie.current = allMovies[Math.floor(Math.random() * allMovies.length)];
+    return lockedMovie.current;
   }, [!!nowPlaying, !!popular, !!trending, !!topRated, !!upcoming]);
 
   if (!mainMovie) return null;
 
-  const { title, logoUrl, overview, id } = mainMovie;
+  const { title, logoUrl, overview, id, backdrop_path } = mainMovie;
 
   return (
-    <div className="overflow-hidden">
-      <VideoBackground movieId={id} />
+    <div className="relative overflow-hidden">
+      <VideoBackground movieId={id} backdropPath={backdrop_path} />
       <VideoTitle
         movieId={id}
         title={logoUrl?.title || title}

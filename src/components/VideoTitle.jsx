@@ -12,15 +12,15 @@ const VideoTitle = ({ movieId, title, overview }) => {
         <img
           src={logoUrl}
           alt="Movie Logo"
-          className="h-10 sm:h-14 md:h-20 lg:h-24 mb-2 sm:mb-3 md:mb-4 object-contain object-left"
+          className="h-7 sm:h-12 md:h-20 lg:h-24 mb-1.5 sm:mb-3 md:mb-4 object-contain object-left"
         />
       ) : (
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 drop-shadow-lg line-clamp-2">
+        <h1 className="text-base sm:text-xl md:text-3xl font-bold mb-1.5 sm:mb-3 md:mb-4 drop-shadow-lg line-clamp-1 sm:line-clamp-2">
           {title}
         </h1>
       )}
 
-      <p className="text-xs sm:text-sm md:text-base text-white/90 max-w-lg mb-3 sm:mb-4 md:mb-6 leading-relaxed line-clamp-2 sm:line-clamp-3 drop-shadow-md">
+      <p className="text-[10px] sm:text-sm md:text-base text-white/90 max-w-lg mb-2 sm:mb-4 md:mb-6 leading-snug sm:leading-relaxed line-clamp-1 sm:line-clamp-2 md:line-clamp-3 drop-shadow-md">
         {overview}
       </p>
 
